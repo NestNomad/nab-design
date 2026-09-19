@@ -1,0 +1,54 @@
+/* Nest Nomad & Beyond: design tokens for 1920x1080 video graphics.
+   Values match tokens/tokens.json. Change them there first, then here. */
+
+:root {
+  /* Colour */
+  --ground: #1a1c16;        /* NNB black. Every frame background. Never pure black. */
+  --panel: #23251c;         /* Plates and cards on ground */
+  --line: #34362b;          /* Decorative hairlines and empty tracks. Never text. */
+  --scrim: rgba(26, 28, 22, 0.8); /* Behind text over B-roll */
+  --white: #ffffff;         /* Primary text */
+  --white-muted: rgba(255, 255, 255, 0.5); /* Secondary text, 40px and up */
+  --nest: #1d9e75;          /* Nest green: home and smart tech */
+  --nomad: #ef9f27;         /* Nomad yellow: outdoor and adventure */
+  --beyond: #d4537e;        /* Beyond pink: portable tech */
+  --key-blue: #0000ff;      /* Keying background only. Never green: it would take Nest green with it. */
+
+  /* Type: Work Sans only */
+  --font-sans: "Work Sans", "Helvetica Neue", Arial, sans-serif;
+
+  /* Space, at 1920x1080 */
+  --space-sm: 16px;
+  --space-md: 32px;
+  --space-lg: 64px;
+  --safe-x: 96px;           /* 5% action-safe, left and right */
+  --safe-y: 54px;           /* 5% action-safe, top */
+  --clear-bottom: 150px;    /* YouTube controls and captions live below this */
+
+  /* Corners */
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-full: 9999px;
+
+  /* Motion: one move per element. Ease out on the way in, ease in on the way out. */
+  --ease-enter: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-exit: cubic-bezier(0.64, 0, 0.78, 0);
+  --dur-enter: 500ms;
+  --dur-exit: 400ms;
+  --stagger: 150ms;         /* The pillar colour moves first, the words follow */
+}
+
+/* Pillars: every video takes ONE. Set the class on the frame. */
+.pillar-nest   { --accent: var(--nest);   --on-accent: var(--ground); }
+.pillar-nomad  { --accent: var(--nomad);  --on-accent: var(--ground); }
+.pillar-beyond { --accent: var(--beyond); --on-accent: var(--ground); }
+/* Text on an accent fill is always --on-accent. Never white on Nomad yellow (2.2:1).
+   Beyond pink as text: 48px and up only (4.4:1 on ground). */
+
+/* On-screen type scale, 1920x1080 frame */
+.t-title-xl    { font: 800 120px/1 var(--font-sans); letter-spacing: -0.02em; }  /* Chapter and title cards, five words or fewer */
+.t-title       { font: 700 88px/1.05 var(--font-sans); letter-spacing: -0.01em; } /* Section headings, verdict cards */
+.t-callout     { font: 700 64px/1.1 var(--font-sans); }   /* Key numbers. Floor for anything a viewer must read on a phone */
+.t-lower-third { font: 700 48px/1.15 var(--font-sans); }  /* Lower-third main line */
+.t-support     { font: 500 40px/1.25 var(--font-sans); }  /* Lower-third second line, labels, units */
+.t-small       { font: 400 36px/1.3 var(--font-sans); }   /* Sources and affiliate notes only */

@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NNB chapter card</title>
+<!--
+  Chapter card: full-frame title between sections of a video.
+  Preview: open in a browser. Add ?pillar=nest, ?pillar=nomad or ?pillar=beyond to switch pillar,
+  ?key=blue to put it on pure blue for keying in CapCut, and ?still=1 to freeze it fully in.
+  Sample text is placeholder copy.
+-->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;700;800&display=swap">
+<link rel="stylesheet" href="../tokens/tokens.css">
+<style>
+  html, body { margin: 0; height: 100%; background: #3a3a3a; overflow: hidden; }
+  .frame { position: absolute; top: 0; left: 0; width: 1920px; height: 1080px; transform-origin: 0 0;
+           background: var(--ground); overflow: hidden; font-family: var(--font-sans); color: var(--white); }
+  .frame.is-keyed { background: var(--key-blue); }
+  .footage { position: absolute; inset: 0; background: #5d6156; } /* stand-in for B-roll, not a brand colour */
+  .frame.is-keyed .footage { display: none; }
+  p, h1 { margin: 0; }
+  @media (prefers-reduced-motion: reduce) { .frame * { transition: none !important; } }
+
+  /* Chapter card: full frame on ground, left aligned at the safe margin. The pillar dot is the only accent. */
+  .cc { position: absolute; left: var(--safe-x); right: var(--safe-x); top: 50%; transform: translateY(-50%); }
+  .cc-row { display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-md); }
+  .cc-dot { width: 48px; height: 48px; border-radius: var(--radius-full); background: var(--accent);
+            transform: scale(0); transition: transform var(--dur-exit) var(--ease-exit) calc(var(--stagger) * 2); }
+  .cc-part { color: var(--white-muted); opacity: 0; transition: opacity var(--dur-exit) var(--ease-exit) var(--stagger); }
+  .cc-title { color: var(--white); opacity: 0; transform: translateY(40px);
+              transition: opacity var(--dur-exit) var(--ease-exit), transform var(--dur-exit) var(--ease-exit); }
+
+  /* In: dot, then label, then title. Out: the reverse. */
+  .is-in .cc-dot { transform: scale(1); transition: transform var(--dur-enter) var(--ease-enter) 0ms; }
+  .is-in .cc-part { opacity: 1; transition: opacity var(--dur-enter) var(--ease-enter) var(--stagger); }
+  .is-in .cc-title { opacity: 1; transform: none;
+                     transition: opacity var(--dur-enter) var(--ease-enter) calc(var(--stagger) * 2),
+                                 transform var(--dur-enter) var(--ease-enter) calc(var(--stagger) * 2); }
+
+</style>
+</head>
+<body>
+<div class="frame pillar-nest">
+  <div class="cc">
+    <div class="cc-row">
+      <span class="cc-dot" aria-hidden="true"></span>
+      <p class="cc-part t-support" data-read>Part two</p>
+    </div>
+    <h1 class="cc-title t-title-xl" data-read>Keeping the lights on</h1>
+  </div>
+</div>
+<script>
+  // Preview harness: fits the 1920x1080 frame to the window, reads ?pillar= and ?key=blue,
+  // then plays the graphic in, holds it, plays it out, and loops.
+  // Hold time follows the NNB rule: 1.5s plus a third of a second per word read.
+  (function () {
+    var frame = document.querySelector('.frame');
+    var params = new URLSearchParams(location.search);
+    var pillar = params.get('pillar');
+    if (pillar === 'nest' || pillar === 'nomad' || pillar === 'beyond') {
+      frame.classList.remove('pillar-nest', 'pillar-nomad', 'pillar-beyond');
+      frame.classList.add('pillar-' + pillar);
+    }
+    if (params.get('key') === 'blue') frame.classList.add('is-keyed');
+
+    function fit() {
+      var s = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+      var x = (window.innerWidth - 1920 * s) / 2, y = (window.innerHeight - 1080 * s) / 2;
+      frame.style.transform = 'translate(' + x + 'px,' + y + 'px) scale(' + s + ')';
+    }
+    window.addEventListener('resize', fit);
+    fit();
+
+    var words = 0;
+    document.querySelectorAll('[data-read]').forEach(function (el) {
+      words += el.textContent.trim().split(/\s+/).filter(Boolean).length;
+    });
+    var hold = 1500 + Math.round(words * 333);
+    var enter = 500 + 150 * 2, exit = 400 + 150 * 2;
+
+    if (params.get('still') === '1') { frame.classList.add('is-in'); return; }
+
+    function cycle() {
+      frame.classList.remove('is-out');
+      void frame.offsetWidth;
+      frame.classList.add('is-in');
+      setTimeout(function () {
+        frame.classList.remove('is-in');
+        frame.classList.add('is-out');
+        setTimeout(cycle, exit + 1200);
+      }, enter + hold);
+    }
+    setTimeout(cycle, 400);
+  })();
+</script>
+
+</body>
+</html>
